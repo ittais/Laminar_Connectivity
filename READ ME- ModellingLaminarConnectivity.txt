@@ -1,0 +1,74 @@
+%This function models cortical laminar connections based on cortical
+%connectivity, cortical laminar composition, and cortical granularity
+%indices. 
+%Model implementation necessitates all of three components per
+%cortical region in order to properly compute.
+%
+%Written by: Ittai Shamir (Mail: ittaisha@mail.tau.ac.il)
+%
+%Reference: 
+%Shamir I, Assaf Y (2021a). An MRI-based, data-driven model of cortical laminar connectivity. Neuroinformatics, vol. 19, 205–218. 
+%(doi: 10.1007/s12021-020-09491-7)
+%
+%
+%The defualt atlas used in this example is the BRAINNETOME atlas.
+%Reference:
+%Fan L, Li H, Zhuo J, Zhang Y, Wang J, Chen L, Yang Z, Chu C, Xie S, 
+%Laird AR, Fox PT, Eickhoff SB, Yu C, Jiang T (2016) The Human Brainnetome 
+%Atlas: A New Brain Atlas Based on Connectional Architecture. 
+%Cerebral Cortex, 26-8, 3508–3526. 
+%doi: 10.1093/cercor/bhw157
+%
+%Brainnetome region order:
+%1:123: left hemisphere regions (LH)
+    %1:105: cortical regions in left hemisphere  
+    %106:123: subcortical regions of left hemisphere
+%124:246: right hemisphere regions (RH)
+    %124:228: cortical regions in right hemisphere
+    %229:246: subcortical regions in right hemisphere
+%
+%IMPORTANT: FOR OTHER ATLASES, CHANGE INDICES OF START/END OF
+%CORTICAL/SUBCORTICAL REGIONS (ACCORDING TO FITTING ORDER OF REGIONS).
+%
+%Abbreviations:  
+%General to brain structure:
+    %LH- left hemisphere
+    %RH- right hemisphere
+    %C- cortical
+    %SC- subcortex  
+    %S- connection strength
+%
+%Specific to cortical laminar structure:
+    %SG- supragranular layers 
+    %G- granular layer
+    %IG- infragranular layers
+%
+%Structure of all bihemispheric variables: 1st half: left hemisphere, 
+%2nd half: right hemisphere***
+%
+%Input arguments: 
+    %1. connectivity- cortical connectivity matrix (LxL, L-number of regions)
+    %2. SG2- supragranular regional content (Lx1)
+    %3. G2- granular regional content (Lx1)
+    %4. IG2- infragrnular regional content (Lx1)
+        %(sum of SG2,G2, and IG2 per cortical region should equal 1) 
+    %5. granularity- regional granularity indices, (Lx1) 
+    %where: 
+        %6- granular, 
+        %5- increasing granular presence, 
+        %4- increasing granular presence, 
+        %3- increasing granular presence, 
+        %2- slightly granular, 
+        %1- agranular, 
+        %0- irrelevant (SC) 
+    %6. labels- region labels (Lx1)
+
+%
+%Output arguments:
+    %ADJ22- adjacency matrix representing laminar connectivity (3Lx3L)
+%Adjacency matrix structure:
+%       IG:     G:     SG:
+% IG: (IG,IG) (IG,G) (IG,SG)
+% G:  (G,IG)   (G,G)  (G,SG)
+% SG: (SG,IG) (SG,G) (SG,SG)
+%
